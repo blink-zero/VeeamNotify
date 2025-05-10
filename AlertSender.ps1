@@ -343,7 +343,14 @@ try {
 			# Call the appropriate notification sender function based on service name
 			switch ($serviceName.ToLower()) {
 				'discord' {
-					$result = Send-WebhookNotification -Service 'Discord' -Parameters $payloadParams -ServiceConfig $service.Value
+                    			$discordParams = [ordered]@{}
+                    			foreach ($key in $payloadParams.Keys) {
+                        			$discordParams[$key] = $payloadParams[$key]
+                    			}
+                		# Add the UserId parameter
+                		$discordParams['UserId'] = $service.Value.user_id
+                		# Use the Discord-specific parameters
+                    		$result = Send-WebhookNotification -Service 'Discord' -Parameters $discordParams -ServiceConfig $service.Value
 				}
 				'slack' {
 					$result = Send-WebhookNotification -Service 'Slack' -Parameters $payloadParams -ServiceConfig $service.Value
